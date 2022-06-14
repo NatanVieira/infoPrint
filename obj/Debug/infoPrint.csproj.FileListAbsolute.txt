@@ -1,0 +1,11 @@
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\bin\Debug\infoPrint.exe.config
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\bin\Debug\infoPrint.exe
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\bin\Debug\infoPrint.pdb
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.csproj.AssemblyReference.cache
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.csproj.SuggestedBindingRedirects.cache
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.Properties.Resources.resources
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.csproj.GenerateResource.cache
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.csproj.CoreCompileInputs.cache
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.exe
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.pdb
+C:\Users\natanael.vieira\Desktop\Outros\infoPrint\infoPrint\obj\Debug\infoPrint.form_main.resources
