@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using infoPrint.models;
@@ -10,13 +11,15 @@ namespace infoPrint
         public form_main()
         {
             InitializeComponent();
-            this.adicionaColunasListView();
+            this.AdicionaColunasListView();
+            if (this.txt_local_arquivo.Text != "" && this.txt_local_arquivo.Text != null)
+                this.btn_ler_arquivo.Enabled = true;
         }
 
         private void btn_abrir_arquivo_Click(object sender, EventArgs e)
         {
             String nomeArquivo;
-            nomeArquivo = this.abreArquivo();
+            nomeArquivo = this.AbreArquivo();
             if (nomeArquivo != "" && nomeArquivo != null)
             {
                 this.txt_local_arquivo.Text = nomeArquivo;
@@ -28,13 +31,14 @@ namespace infoPrint
             }
         }
 
-        private string abreArquivo()
+        private string AbreArquivo()
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.InitialDirectory = this.txt_local_arquivo.Text;
                 ofd.Filter = "Arquivos CSV (*.csv)|*.csv|All files (*.*)|*.*";
                 ofd.FilterIndex = 0;
+                ofd.RestoreDirectory = true;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
@@ -44,7 +48,7 @@ namespace infoPrint
             }
         }
 
-        private void atualizaTextoBotao(int opcao)
+        private void AtualizaTextoBotao(int opcao)
         {
             if(opcao == 1)
             {
@@ -72,11 +76,11 @@ namespace infoPrint
 
         private void btn_ler_arquivo_Click(object sender, EventArgs e)
         {
-            string nomeArquivo = this.copiaArquivo(this.txt_local_arquivo.Text);
-            this.lerArquivo(nomeArquivo);
+            string nomeArquivo = this.CopiaArquivo(this.txt_local_arquivo.Text);
+            this.LerArquivo(nomeArquivo);
         }
 
-        private string copiaArquivo(string nomeArquivo)
+        private string CopiaArquivo(string nomeArquivo)
         {
             try
             {
@@ -90,7 +94,7 @@ namespace infoPrint
             return arquivoCopiado;
         }
 
-        private void lerArquivo(string pathArquivo)
+        private void LerArquivo(string pathArquivo)
         {
             DateTime data_inicial = new DateTime(9999, 12, 31, 23, 59, 59);
             DateTime data_final = new DateTime(2001, 01, 01, 00, 00, 00);
@@ -138,7 +142,7 @@ namespace infoPrint
                             if (this.maquinas.IndexOf(impressao.Maquina) == -1)
                                 this.maquinas.Add(impressao.Maquina);
                         }
-                        this.atualizaTextoBotao(1);
+                        this.AtualizaTextoBotao(1);
                     }
                     leitura.Close();
                 }
@@ -158,13 +162,15 @@ namespace infoPrint
                 this.dtp_data_inicial.Value = data_inicial;
                 this.dtp_data_final.Value = data_final;
                 this.btn_buscar.Enabled = true;
+                this.PreparaListaUsuarios();
+                this.PreparaListaMaquinas();
             }
             else
                 MessageBox.Show("Nenhum dado foi importado", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            this.deletaArquivo(pathArquivo);
+            this.DeletaArquivo(pathArquivo);
         }
 
-        private void deletaArquivo(string nomeArquivo)
+        private void DeletaArquivo(string nomeArquivo)
         {
             try
             {
@@ -176,7 +182,43 @@ namespace infoPrint
             }
         }
 
-        private void adicionaColunasListView()
+        private void PreparaListaUsuarios() {
+            List<string> nomes = new List<string>();
+            impressoes.ForEach(impressao =>
+                {
+                    if(nomes.FindIndex(x => x == impressao.Usuario) == -1)
+                        nomes.Add(impressao.Usuario);
+                }
+             );
+            string[] strNomes = new string[nomes.Count];
+            for(int i = 0; i < nomes.Count; i++)
+                strNomes[i] = nomes[i].ToString();
+
+            this.listaNomes.AddRange(strNomes);
+            this.txt_usuario.AutoCompleteCustomSource = this.listaNomes;
+            this.txt_usuario.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            this.txt_usuario.AutoCompleteSource = AutoCompleteSource.CustomSource;
+        }
+
+        private void PreparaListaMaquinas() {
+            List<string> maquinas = new List<string>();
+            impressoes.ForEach(impressao =>
+            {
+                if(maquinas.FindIndex(x => x == impressao.Maquina) == -1)
+                    maquinas.Add(impressao.Maquina);
+            }
+             );
+            string[] strMaquinas = new string[maquinas.Count];
+            for(int i = 0;i < maquinas.Count;i++)
+                strMaquinas[i] = maquinas[i].ToString();
+
+            this.listaMaquinas.AddRange(strMaquinas);
+            this.txt_maquina.AutoCompleteCustomSource = this.listaMaquinas;
+            this.txt_maquina.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            this.txt_maquina.AutoCompleteSource = AutoCompleteSource.CustomSource;
+        }
+
+        private void AdicionaColunasListView()
         {
             this.lv_impressoes.Columns.Add("Data", 120);
             this.lv_impressoes.Columns.Add("Usuário", 120);
@@ -195,7 +237,7 @@ namespace infoPrint
             this.lv_impressoes.Refresh();
         }
 
-        private void preparaProgressBar(int minimo, int maximo)
+        private void PreparaProgressBar(int minimo, int maximo)
         {
             this.pb_carregamento_listview.Visible = true;
             this.pb_carregamento_listview.Minimum = minimo;
@@ -204,16 +246,16 @@ namespace infoPrint
             this.pb_carregamento_listview.Step = 1;
         }
 
-        private void fechaProgressBar()
+        private void FechaProgressBar()
         {
             this.pb_carregamento_listview.Visible = false;
         }
 
-        private void populaListView()
+        private void PopulaListView()
         {
             this.lv_impressoes.Clear();
-            this.adicionaColunasListView();
-            this.preparaProgressBar(0, this.impressoes_filtro.Count);
+            this.AdicionaColunasListView();
+            this.PreparaProgressBar(0, this.impressoes_filtro.Count);
 
             for (int i = 0; i <= this.impressoes_filtro.Count - 1; i++)
             {
@@ -235,7 +277,7 @@ namespace infoPrint
                 this.pb_carregamento_listview.PerformStep();
             }
             this.lv_impressoes.Refresh();
-            this.fechaProgressBar();
+            this.FechaProgressBar();
         }   
 
         private void btn_buscar_impressoes_Click(object sender, EventArgs e)
@@ -252,7 +294,7 @@ namespace infoPrint
             });
             if (this.impressoes_filtro.Count > 0)
             {
-                this.populaListView();
+                this.PopulaListView();
             }
             else
                 MessageBox.Show("Não foram encontrados registros", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -262,7 +304,7 @@ namespace infoPrint
         {
             string nomeArquivo = this.SalvaArquivo();
             if (nomeArquivo != "" && nomeArquivo != null)
-                this.gravarArquivo(nomeArquivo);
+                this.GravarArquivo(nomeArquivo);
         }
 
         private string SalvaArquivo()
@@ -279,9 +321,9 @@ namespace infoPrint
             }
         }
 
-        private void gravarArquivo(string nomeArquivo)
+        private void GravarArquivo(string nomeArquivo)
         {
-            this.preparaProgressBar(0, this.impressoes_filtro.Count);
+            this.PreparaProgressBar(0, this.impressoes_filtro.Count);
             using (StreamWriter sw = new StreamWriter(nomeArquivo))
             {
                 sw.WriteLine("Data;Usuário;N. Páginas;N. Cópias;Impressora;Documento;Máquina;Papel;Linguagem;Altura;Largura;Duplex;Escala de Cinza;Tamanho");
@@ -305,7 +347,7 @@ namespace infoPrint
                 });
                 sw.Close();
             }
-            this.fechaProgressBar();
+            this.FechaProgressBar();
         }
     }
 }

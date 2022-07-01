@@ -270,6 +270,8 @@ namespace infoPrint
         private List<string> maquinas = new List<string>();
         private ProgressBar pb_carregamento_listview;
         private string arquivoCopiado = @"C:\Temp\impressoes.csv";
+        private AutoCompleteStringCollection listaNomes = new AutoCompleteStringCollection();
+        private AutoCompleteStringCollection listaMaquinas = new AutoCompleteStringCollection();
     }
 }
 
